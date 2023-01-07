@@ -30,10 +30,7 @@ export enum PieceType {
 
 const initialBoardState: Piece[] = []
 
-for(let i = 0; i < 8; i++){
-    initialBoardState.push({image: "assets/images/pawn_b.png", x: i, y: 6, type: PieceType.PAWN, team: TeamType.OPPONENT})
-    initialBoardState.push({image: 'assets/images/pawn_w.png', x: i, y: 1, type: PieceType.PAWN, team: TeamType.OUR})
-}
+
 for(let p = 0; p < 2; p++ ){
     const teamType = (p === 0) ? TeamType.OPPONENT : TeamType.OUR
     const type = teamType === TeamType.OPPONENT ? "b" : "w"
@@ -46,6 +43,10 @@ for(let p = 0; p < 2; p++ ){
     initialBoardState.push({image: `assets/images/bishop_${type}.png`, x: 5, y: y, type: PieceType.BISHOP, team: teamType})
     initialBoardState.push({image: `assets/images/queen_${type}.png`, x: 3, y: y, type: PieceType.QUEEN, team: teamType})
     initialBoardState.push({image: `assets/images/king_${type}.png`, x: 4, y: y, type: PieceType.KING, team: teamType})
+}
+for(let i = 0; i < 8; i++){
+    initialBoardState.push({image: "assets/images/pawn_b.png", x: i, y: 6, type: PieceType.PAWN, team: TeamType.OPPONENT})
+    initialBoardState.push({image: 'assets/images/pawn_w.png', x: i, y: 1, type: PieceType.PAWN, team: TeamType.OUR})
 }
 
 export default function Chessboard(){
@@ -110,26 +111,35 @@ export default function Chessboard(){
             const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100)
             const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100))
 
+            const currentPiece = pieces.find(p => p.x === gridX && p.y === gridY)
+            const attackedPiece = pieces.find(p => p.x === x && p.y === y)
 
-            setPieces((value) => {
-                const pieces = value.map(p => {
-                    if(p.x === gridX && p.y === gridY){
-                        const validMove = referee.isValidMove(gridX, gridY, x, y, p.type, p.team, value)
+            if(currentPiece){
+                const validMove = referee.isValidMove(gridX, gridY,x, y, currentPiece?.type, currentPiece?.team, pieces)
+                if(validMove){
 
-                        if(validMove){
-                            p.x = x
-                            p.y = y
-                        }else{
-                            activePiece.style.position = "relative"
-                            activePiece.style.removeProperty('top')
-                            activePiece.style.removeProperty('left')
+                    const updatedPieces = pieces.reduce((results, piece) => {
+                        if(piece.x === currentPiece.x && piece.y === currentPiece.y){
+                            piece.x = x
+                            piece.y = y
+                            results.push(piece)
+                        }else if (!(piece.x === x && piece.y === y)){
+                            console.log(piece.x, piece.y)
+                            console.log(x, y)   
+                            results.push(piece)
                         }
                         
-                    }
-                    return p
-                })
-                return pieces
-            })
+                        return results
+                    }, [] as Piece[])
+
+                    setPieces(updatedPieces)
+                }else{
+                    activePiece.style.position = "relative"
+                    activePiece.style.removeProperty('top')
+                    activePiece.style.removeProperty('left')
+                }
+                
+            }
             setActivePiece(null)
         }
     }
