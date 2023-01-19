@@ -45,8 +45,6 @@ export default class Referee{
     }
 
     isValidMove(initialPosition: Position, desiredPosition: Position, type: PieceType, team: TeamType, boardState: Piece[]){
-        console.log("Referee is checking the move...")
-        console.log(type)
 
         if(type === PieceType.PAWN){
             const specialRow = (team === TeamType.OUR) ? 1 : 6
@@ -88,6 +86,64 @@ export default class Referee{
                     }            
                 }
             }
+        }else if (type === PieceType.BISHOP){
+            for(let i = 1; i < 9; i++){
+                // up right movement
+                if(desiredPosition.x > initialPosition.x && desiredPosition.y > initialPosition.y){
+                    let passedPostion : Position = {x: initialPosition.x + i, y: initialPosition.y + i}
+                    if(passedPostion.x === desiredPosition.x && passedPostion.y === desiredPosition.y){
+                        if(this.tileIsEmptyOrOccupiedByOpponent(passedPostion, boardState, team)){
+                            return true
+                        }
+                    }else {
+                        if(this.tileIsOccupied(passedPostion, boardState)){
+                            break
+                        }
+                    }
+                    
+                }
+                // bottom right movement
+                if(desiredPosition.x > initialPosition.x && desiredPosition.y < initialPosition.y){
+                    let passedPostion : Position = {x: initialPosition.x + i, y: initialPosition.y - i}
+                    if(passedPostion.x === desiredPosition.x && passedPostion.y === desiredPosition.y){
+                        if(this.tileIsEmptyOrOccupiedByOpponent(passedPostion, boardState, team)){
+                            return true
+                        }
+                    }else {
+                        if(this.tileIsOccupied(passedPostion, boardState)){
+                            break
+                        }
+                    }
+                
+                }
+                // bottom left movement
+                if(desiredPosition.x < initialPosition.x && desiredPosition.y < initialPosition.y){
+                    let passedPostion : Position = {x: initialPosition.x - i, y: initialPosition.y - i}
+                    if(passedPostion.x === desiredPosition.x && passedPostion.y === desiredPosition.y){
+                        if(this.tileIsEmptyOrOccupiedByOpponent(passedPostion, boardState, team)){
+                            return true
+                        }
+                    }else {
+                        if(this.tileIsOccupied(passedPostion, boardState)){
+                            break
+                        }
+                    }
+                }
+                // top left movement
+                if(desiredPosition.x < initialPosition.x && desiredPosition.y > initialPosition.y){
+                    let passedPostion : Position = {x: initialPosition.x - i, y: initialPosition.y + 1}
+                    if(passedPostion.x === desiredPosition.x && passedPostion.y === desiredPosition.y){
+                        if(this.tileIsEmptyOrOccupiedByOpponent(passedPostion, boardState, team)){
+                            return true
+                        }
+                    }else {
+                        if(this.tileIsOccupied(passedPostion, boardState)){
+                            break
+                        }
+                    }
+                }
+            }
+            
         }
 
         
