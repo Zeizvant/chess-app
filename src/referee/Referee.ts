@@ -188,6 +188,40 @@ export default class Referee{
         return false
     }
 
+    queenMove(initialPosition: Position, desiredPosition: Position, team: TeamType, boardState: Piece[]): boolean {
+        for(let i = 1; i < 8; i++){
+
+            //diagonal
+            let multiplierX
+            let multiplierY
+            if(desiredPosition.x < initialPosition.x){
+                multiplierX = -1
+            }else if(desiredPosition.x > initialPosition.x){
+                multiplierX = 1
+            }else {
+                multiplierX = 0
+            }
+            if(desiredPosition.y < initialPosition.y){
+                multiplierY = -1
+            }else if(desiredPosition.y > initialPosition.y){
+                multiplierY = 1
+            }else {
+                multiplierY = 0
+            }
+            let passedPostion : Position = {x: initialPosition.x + (i* multiplierX), y: initialPosition.y + (i * multiplierY)}
+            if(passedPostion.x === desiredPosition.x && passedPostion.y === desiredPosition.y){
+                if(this.tileIsEmptyOrOccupiedByOpponent(passedPostion, boardState, team)){
+                    return true
+                }
+            }else {
+                if(this.tileIsOccupied(passedPostion, boardState)){
+                    break
+                }
+            }
+        }
+        return false
+    }
+
     isValidMove(initialPosition: Position, desiredPosition: Position, type: PieceType, team: TeamType, boardState: Piece[]){
 
         let validMove = false
@@ -203,6 +237,11 @@ export default class Referee{
                 break
             case PieceType.ROOK:
                 validMove = this.rookMove(initialPosition, desiredPosition, team, boardState)
+                break
+            case PieceType.QUEEN:
+                validMove = this.queenMove(initialPosition, desiredPosition, team, boardState)
+                break
+            case PieceType.KING:
         }
         return validMove
     }
