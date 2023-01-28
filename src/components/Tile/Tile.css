@@ -32,6 +32,9 @@
 .tile .chess-piece:active{
     cursor: grabbing;
 }
-.tile-highlight{
+.tile-highlight:not(.chess-piece-tile){
     background-color: #d9d202;
+}
+.tile-highlight.chess-piece-tile{
+    background-color: #ad0303;
 }
